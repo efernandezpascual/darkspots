@@ -36,13 +36,14 @@
         <script src="js/labels.js"></script>
         <script src="js/leaflet.photon.js"></script>
         <script src="data/AFLIBER_1.js"></script>
-        <script src="data/Parroquies_2.js"></script>
-        <script src="data/Conceyos_3.js"></script>
-        <script src="data/iNaturalist_4.js"></script>
+        <script src="data/Parroquies_Especies_2.js"></script>
+        <script src="data/Parroquies_3.js"></script>
+        <script src="data/Conceyos_4.js"></script>
+        <script src="data/iNaturalist_5.js"></script>
         <script>
         var map = L.map('map', {
             zoomControl:false, maxZoom:28, minZoom:1
-        }).fitBounds([[43.23732468429724,-5.822340068916294],[43.48638609130337,-5.365417100849288]]);
+        }).fitBounds([[43.365082015999604,-5.73040097454798],[43.44593101419314,-5.581970507793464]]);
         var hash = new L.Hash(map);
         map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
         var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
@@ -233,10 +234,31 @@
         });
         bounds_group.addLayer(layer_AFLIBER_1);
         map.addLayer(layer_AFLIBER_1);
-        function pop_Parroquies_2(feature, layer) {
+        function pop_Parroquies_Especies_2(feature, layer) {
             var popupContent = '<table>\
                     <tr>\
+                        <td colspan="2">' + (feature.properties['fid'] !== null ? autolinker.link(String(feature.properties['fid']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Code'] !== null ? autolinker.link(String(feature.properties['Code']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
                         <td class="visible-with-data" id="Parroquia" colspan="2"><strong>Parroquia</strong><br />' + (feature.properties['Parroquia'] !== null ? autolinker.link(String(feature.properties['Parroquia']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Concejo'] !== null ? autolinker.link(String(feature.properties['Concejo']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['n_obs'] !== null ? autolinker.link(String(feature.properties['n_obs']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['n_species'] !== null ? autolinker.link(String(feature.properties['n_species']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['log_n_obs'] !== null ? autolinker.link(String(feature.properties['log_n_obs']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['log_n_spp'] !== null ? autolinker.link(String(feature.properties['log_n_spp']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
                     </tr>\
                 </table>';
             var content = removeEmptyRowsFromPopupContent(popupContent, feature);
@@ -246,10 +268,10 @@
 			layer.bindPopup(content, { maxHeight: 400 });
         }
 
-        function style_Parroquies_2_0(feature) {
+        function style_Parroquies_Especies_2_0(feature) {
             if (feature.properties['log_n_spp'] >= 0.000000 && feature.properties['log_n_spp'] <= 0.693147 ) {
                 return {
-                pane: 'pane_Parroquies_2',
+                pane: 'pane_Parroquies_Especies_2',
                 opacity: 1,
                 color: 'rgba(35,35,35,1.0)',
                 dashArray: '',
@@ -264,7 +286,7 @@
             }
             if (feature.properties['log_n_spp'] >= 0.693147 && feature.properties['log_n_spp'] <= 1.430923 ) {
                 return {
-                pane: 'pane_Parroquies_2',
+                pane: 'pane_Parroquies_Especies_2',
                 opacity: 1,
                 color: 'rgba(35,35,35,1.0)',
                 dashArray: '',
@@ -279,7 +301,7 @@
             }
             if (feature.properties['log_n_spp'] >= 1.430923 && feature.properties['log_n_spp'] <= 2.397895 ) {
                 return {
-                pane: 'pane_Parroquies_2',
+                pane: 'pane_Parroquies_Especies_2',
                 opacity: 1,
                 color: 'rgba(35,35,35,1.0)',
                 dashArray: '',
@@ -294,7 +316,7 @@
             }
             if (feature.properties['log_n_spp'] >= 2.397895 && feature.properties['log_n_spp'] <= 3.346241 ) {
                 return {
-                pane: 'pane_Parroquies_2',
+                pane: 'pane_Parroquies_Especies_2',
                 opacity: 1,
                 color: 'rgba(35,35,35,1.0)',
                 dashArray: '',
@@ -309,7 +331,7 @@
             }
             if (feature.properties['log_n_spp'] >= 3.346241 && feature.properties['log_n_spp'] <= 6.049733 ) {
                 return {
-                pane: 'pane_Parroquies_2',
+                pane: 'pane_Parroquies_Especies_2',
                 opacity: 1,
                 color: 'rgba(35,35,35,1.0)',
                 dashArray: '',
@@ -323,21 +345,61 @@
             }
             }
         }
-        map.createPane('pane_Parroquies_2');
-        map.getPane('pane_Parroquies_2').style.zIndex = 402;
-        map.getPane('pane_Parroquies_2').style['mix-blend-mode'] = 'normal';
-        var layer_Parroquies_2 = new L.geoJson(json_Parroquies_2, {
+        map.createPane('pane_Parroquies_Especies_2');
+        map.getPane('pane_Parroquies_Especies_2').style.zIndex = 402;
+        map.getPane('pane_Parroquies_Especies_2').style['mix-blend-mode'] = 'normal';
+        var layer_Parroquies_Especies_2 = new L.geoJson(json_Parroquies_Especies_2, {
             attribution: '',
             interactive: true,
-            dataVar: 'json_Parroquies_2',
-            layerName: 'layer_Parroquies_2',
-            pane: 'pane_Parroquies_2',
-            onEachFeature: pop_Parroquies_2,
-            style: style_Parroquies_2_0,
+            dataVar: 'json_Parroquies_Especies_2',
+            layerName: 'layer_Parroquies_Especies_2',
+            pane: 'pane_Parroquies_Especies_2',
+            onEachFeature: pop_Parroquies_Especies_2,
+            style: style_Parroquies_Especies_2_0,
         });
-        bounds_group.addLayer(layer_Parroquies_2);
-        map.addLayer(layer_Parroquies_2);
-        function pop_Conceyos_3(feature, layer) {
+        bounds_group.addLayer(layer_Parroquies_Especies_2);
+        map.addLayer(layer_Parroquies_Especies_2);
+        function pop_Parroquies_3(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td class="visible-with-data" id="Parroquia" colspan="2"><strong>Parroquia</strong><br />' + (feature.properties['Parroquia'] !== null ? autolinker.link(String(feature.properties['Parroquia']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_Parroquies_3_0() {
+            return {
+                pane: 'pane_Parroquies_3',
+                opacity: 1,
+                color: 'rgba(29,32,35,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 1.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+        }
+        map.createPane('pane_Parroquies_3');
+        map.getPane('pane_Parroquies_3').style.zIndex = 403;
+        map.getPane('pane_Parroquies_3').style['mix-blend-mode'] = 'normal';
+        var layer_Parroquies_3 = new L.geoJson(json_Parroquies_3, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_Parroquies_3',
+            layerName: 'layer_Parroquies_3',
+            pane: 'pane_Parroquies_3',
+            onEachFeature: pop_Parroquies_3,
+            style: style_Parroquies_3_0,
+        });
+        bounds_group.addLayer(layer_Parroquies_3);
+        map.addLayer(layer_Parroquies_3);
+        function pop_Conceyos_4(feature, layer) {
             var popupContent = '<table>\
                     <tr>\
                         <td class="visible-with-data" id="conceyu" colspan="2"><strong>conceyu</strong><br />' + (feature.properties['conceyu'] !== null ? autolinker.link(String(feature.properties['conceyu']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
@@ -350,9 +412,9 @@
 			layer.bindPopup(content, { maxHeight: 400 });
         }
 
-        function style_Conceyos_3_0() {
+        function style_Conceyos_4_0() {
             return {
-                pane: 'pane_Conceyos_3',
+                pane: 'pane_Conceyos_4',
                 opacity: 1,
                 color: 'rgba(0,0,0,1.0)',
                 dashArray: '',
@@ -363,21 +425,21 @@
                 interactive: true,
             }
         }
-        map.createPane('pane_Conceyos_3');
-        map.getPane('pane_Conceyos_3').style.zIndex = 403;
-        map.getPane('pane_Conceyos_3').style['mix-blend-mode'] = 'normal';
-        var layer_Conceyos_3 = new L.geoJson(json_Conceyos_3, {
+        map.createPane('pane_Conceyos_4');
+        map.getPane('pane_Conceyos_4').style.zIndex = 404;
+        map.getPane('pane_Conceyos_4').style['mix-blend-mode'] = 'normal';
+        var layer_Conceyos_4 = new L.geoJson(json_Conceyos_4, {
             attribution: '',
             interactive: true,
-            dataVar: 'json_Conceyos_3',
-            layerName: 'layer_Conceyos_3',
-            pane: 'pane_Conceyos_3',
-            onEachFeature: pop_Conceyos_3,
-            style: style_Conceyos_3_0,
+            dataVar: 'json_Conceyos_4',
+            layerName: 'layer_Conceyos_4',
+            pane: 'pane_Conceyos_4',
+            onEachFeature: pop_Conceyos_4,
+            style: style_Conceyos_4_0,
         });
-        bounds_group.addLayer(layer_Conceyos_3);
-        map.addLayer(layer_Conceyos_3);
-        function pop_iNaturalist_4(feature, layer) {
+        bounds_group.addLayer(layer_Conceyos_4);
+        map.addLayer(layer_Conceyos_4);
+        function pop_iNaturalist_5(feature, layer) {
             var popupContent = '<table>\
                     <tr>\
                         <td class="visible-with-data" id="scientific_name" colspan="2"><strong>scientific_name</strong><br />' + (feature.properties['scientific_name'] !== null ? autolinker.link(String(feature.properties['scientific_name']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
@@ -390,9 +452,9 @@
 			layer.bindPopup(content, { maxHeight: 400 });
         }
 
-        function style_iNaturalist_4_0() {
+        function style_iNaturalist_5_0() {
             return {
-                pane: 'pane_iNaturalist_4',
+                pane: 'pane_iNaturalist_5',
                 radius: 6.400000000000002,
                 opacity: 1,
                 color: 'rgba(61,128,53,1.0)',
@@ -406,30 +468,31 @@
                 interactive: true,
             }
         }
-        map.createPane('pane_iNaturalist_4');
-        map.getPane('pane_iNaturalist_4').style.zIndex = 404;
-        map.getPane('pane_iNaturalist_4').style['mix-blend-mode'] = 'normal';
-        var layer_iNaturalist_4 = new L.geoJson(json_iNaturalist_4, {
+        map.createPane('pane_iNaturalist_5');
+        map.getPane('pane_iNaturalist_5').style.zIndex = 405;
+        map.getPane('pane_iNaturalist_5').style['mix-blend-mode'] = 'normal';
+        var layer_iNaturalist_5 = new L.geoJson(json_iNaturalist_5, {
             attribution: '',
             interactive: true,
-            dataVar: 'json_iNaturalist_4',
-            layerName: 'layer_iNaturalist_4',
-            pane: 'pane_iNaturalist_4',
-            onEachFeature: pop_iNaturalist_4,
+            dataVar: 'json_iNaturalist_5',
+            layerName: 'layer_iNaturalist_5',
+            pane: 'pane_iNaturalist_5',
+            onEachFeature: pop_iNaturalist_5,
             pointToLayer: function (feature, latlng) {
                 var context = {
                     feature: feature,
                     variables: {}
                 };
-                return L.circleMarker(latlng, style_iNaturalist_4_0(feature));
+                return L.circleMarker(latlng, style_iNaturalist_5_0(feature));
             },
         });
-        bounds_group.addLayer(layer_iNaturalist_4);
-        map.addLayer(layer_iNaturalist_4);
+        bounds_group.addLayer(layer_iNaturalist_5);
+        map.addLayer(layer_iNaturalist_5);
         var overlaysTree = [
-            {label: '<img src="legend/iNaturalist_4.png" /> iNaturalist', layer: layer_iNaturalist_4},
-            {label: '<img src="legend/Conceyos_3.png" /> Conceyos', layer: layer_Conceyos_3},
-            {label: 'Parroquies<br /><table><tr><td style="text-align: center;"><img src="legend/Parroquies_2_00690.png" /></td><td>0 - 0.69</td></tr><tr><td style="text-align: center;"><img src="legend/Parroquies_2_0691431.png" /></td><td>0.69 - 1.43</td></tr><tr><td style="text-align: center;"><img src="legend/Parroquies_2_143242.png" /></td><td>1.43 - 2.4</td></tr><tr><td style="text-align: center;"><img src="legend/Parroquies_2_243353.png" /></td><td>2.4 - 3.35</td></tr><tr><td style="text-align: center;"><img src="legend/Parroquies_2_3356054.png" /></td><td>3.35 - 6.05</td></tr></table>', layer: layer_Parroquies_2},
+            {label: '<img src="legend/iNaturalist_5.png" /> iNaturalist', layer: layer_iNaturalist_5},
+            {label: '<img src="legend/Conceyos_4.png" /> Conceyos', layer: layer_Conceyos_4},
+            {label: '<img src="legend/Parroquies_3.png" /> Parroquies', layer: layer_Parroquies_3},
+            {label: 'Parroquies_Especies<br /><table><tr><td style="text-align: center;"><img src="legend/Parroquies_Especies_2_00690.png" /></td><td>0 - 0.69</td></tr><tr><td style="text-align: center;"><img src="legend/Parroquies_Especies_2_0691431.png" /></td><td>0.69 - 1.43</td></tr><tr><td style="text-align: center;"><img src="legend/Parroquies_Especies_2_143242.png" /></td><td>1.43 - 2.4</td></tr><tr><td style="text-align: center;"><img src="legend/Parroquies_Especies_2_243353.png" /></td><td>2.4 - 3.35</td></tr><tr><td style="text-align: center;"><img src="legend/Parroquies_Especies_2_3356054.png" /></td><td>3.35 - 6.05</td></tr></table>', layer: layer_Parroquies_Especies_2},
             {label: 'AFLIBER<br /><table><tr><td style="text-align: center;"><img src="legend/AFLIBER_1_0960.png" /></td><td>0 - 96</td></tr><tr><td style="text-align: center;"><img src="legend/AFLIBER_1_961451.png" /></td><td>96 - 145</td></tr><tr><td style="text-align: center;"><img src="legend/AFLIBER_1_1452372.png" /></td><td>145 - 237</td></tr><tr><td style="text-align: center;"><img src="legend/AFLIBER_1_2373533.png" /></td><td>237 - 353</td></tr><tr><td style="text-align: center;"><img src="legend/AFLIBER_1_3539484.png" /></td><td>353 - 948</td></tr></table>', layer: layer_AFLIBER_1},
             {label: "Google Satellite Hybrid", layer: layer_GoogleSatelliteHybrid_0},]
         var lay = L.control.layers.tree(null, overlaysTree,{
