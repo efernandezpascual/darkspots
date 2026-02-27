@@ -1,0 +1,498 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css">
+        <link rel="stylesheet" href="css/L.Control.Layers.Tree.css">
+        <link rel="stylesheet" href="css/qgis2web.css">
+        <link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <link rel="stylesheet" href="css/leaflet.photon.css">
+        <style>
+        html, body, #map {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+        </style>
+        <title></title>
+    </head>
+    <body>
+        <div id="map">
+        </div>
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script>
+        <script src="js/L.Control.Layers.Tree.min.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script src="js/leaflet.photon.js"></script>
+        <script src="data/AFLIBER_1.js"></script>
+        <script src="data/Parroquies_2.js"></script>
+        <script src="data/Conceyos_3.js"></script>
+        <script src="data/iNaturalist_4.js"></script>
+        <script>
+        var map = L.map('map', {
+            zoomControl:false, maxZoom:28, minZoom:1
+        }).fitBounds([[43.23732468429724,-5.822340068916294],[43.48638609130337,-5.365417100849288]]);
+        var hash = new L.Hash(map);
+        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
+        var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
+        // remove popup's row if "visible-with-data"
+        function removeEmptyRowsFromPopupContent(content, feature) {
+         var tempDiv = document.createElement('div');
+         tempDiv.innerHTML = content;
+         var rows = tempDiv.querySelectorAll('tr');
+         for (var i = 0; i < rows.length; i++) {
+             var td = rows[i].querySelector('td.visible-with-data');
+             var key = td ? td.id : '';
+             if (td && td.classList.contains('visible-with-data') && feature.properties[key] == null) {
+                 rows[i].parentNode.removeChild(rows[i]);
+             }
+         }
+         return tempDiv.innerHTML;
+        }
+        // modify popup if contains media
+        function addClassToPopupIfMedia(content, popup) {
+            var tempDiv = document.createElement('div');
+            tempDiv.innerHTML = content;
+            var imgTd = tempDiv.querySelector('td img');
+            if (imgTd) {
+                var src = imgTd.getAttribute('src');
+                if (/\.(jpg|jpeg|png|gif|bmp|webp|avif)$/i.test(src)) {
+                    popup._contentNode.classList.add('media');
+                    setTimeout(function() {
+                        popup.update();
+                    }, 10);
+                } else if (/\.(mp3|wav|ogg|aac)$/i.test(src)) {
+                    var audio = document.createElement('audio');
+                    audio.controls = true;
+                    audio.src = src;
+                    imgTd.parentNode.replaceChild(audio, imgTd);
+                    popup._contentNode.classList.add('media');
+                    setTimeout(function() {
+                        popup.setContent(tempDiv.innerHTML);
+                        popup.update();
+                    }, 10);
+                } else if (/\.(mp4|webm|ogg|mov)$/i.test(src)) {
+                    var video = document.createElement('video');
+                    video.controls = true;
+                    video.src = src;
+                    video.style.width = "400px";
+                    video.style.height = "300px";
+                    video.style.maxHeight = "60vh";
+                    video.style.maxWidth = "60vw";
+                    imgTd.parentNode.replaceChild(video, imgTd);
+                    popup._contentNode.classList.add('media');
+                    // Aggiorna il popup quando il video carica i metadati
+                    video.addEventListener('loadedmetadata', function() {
+                        popup.update();
+                    });
+                    setTimeout(function() {
+                        popup.setContent(tempDiv.innerHTML);
+                        popup.update();
+                    }, 10);
+                } else {
+                    popup._contentNode.classList.remove('media');
+                }
+            } else {
+                popup._contentNode.classList.remove('media');
+            }
+        }
+        var zoomControl = L.control.zoom({
+            position: 'topleft'
+        }).addTo(map);
+        var bounds_group = new L.featureGroup([]);
+        function setBounds() {
+        }
+        map.createPane('pane_GoogleSatelliteHybrid_0');
+        map.getPane('pane_GoogleSatelliteHybrid_0').style.zIndex = 400;
+        var layer_GoogleSatelliteHybrid_0 = L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
+            pane: 'pane_GoogleSatelliteHybrid_0',
+            opacity: 1.0,
+            attribution: '',
+            minZoom: 1,
+            maxZoom: 28,
+            minNativeZoom: 0,
+            maxNativeZoom: 19
+        });
+        layer_GoogleSatelliteHybrid_0;
+        map.addLayer(layer_GoogleSatelliteHybrid_0);
+        function pop_AFLIBER_1(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td class="visible-with-data" id="CUADRICULA" colspan="2"><strong>CUADRICULA</strong><br />' + (feature.properties['CUADRICULA'] !== null ? autolinker.link(String(feature.properties['CUADRICULA']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td class="visible-with-data" id="n_species" colspan="2"><strong>n_species</strong><br />' + (feature.properties['n_species'] !== null ? autolinker.link(String(feature.properties['n_species']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_AFLIBER_1_0(feature) {
+            if (feature.properties['n_species'] >= 0.000000 && feature.properties['n_species'] <= 96.200000 ) {
+                return {
+                pane: 'pane_AFLIBER_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(247,251,255,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['n_species'] >= 96.200000 && feature.properties['n_species'] <= 145.200000 ) {
+                return {
+                pane: 'pane_AFLIBER_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(200,220,240,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['n_species'] >= 145.200000 && feature.properties['n_species'] <= 237.000000 ) {
+                return {
+                pane: 'pane_AFLIBER_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(115,178,216,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['n_species'] >= 237.000000 && feature.properties['n_species'] <= 353.000000 ) {
+                return {
+                pane: 'pane_AFLIBER_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(41,121,185,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['n_species'] >= 353.000000 && feature.properties['n_species'] <= 948.000000 ) {
+                return {
+                pane: 'pane_AFLIBER_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(8,48,107,1.0)',
+                interactive: true,
+            }
+            }
+        }
+        map.createPane('pane_AFLIBER_1');
+        map.getPane('pane_AFLIBER_1').style.zIndex = 401;
+        map.getPane('pane_AFLIBER_1').style['mix-blend-mode'] = 'normal';
+        var layer_AFLIBER_1 = new L.geoJson(json_AFLIBER_1, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_AFLIBER_1',
+            layerName: 'layer_AFLIBER_1',
+            pane: 'pane_AFLIBER_1',
+            onEachFeature: pop_AFLIBER_1,
+            style: style_AFLIBER_1_0,
+        });
+        bounds_group.addLayer(layer_AFLIBER_1);
+        map.addLayer(layer_AFLIBER_1);
+        function pop_Parroquies_2(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td class="visible-with-data" id="Parroquia" colspan="2"><strong>Parroquia</strong><br />' + (feature.properties['Parroquia'] !== null ? autolinker.link(String(feature.properties['Parroquia']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_Parroquies_2_0(feature) {
+            if (feature.properties['log_n_spp'] >= 0.000000 && feature.properties['log_n_spp'] <= 0.693147 ) {
+                return {
+                pane: 'pane_Parroquies_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(247,251,255,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['log_n_spp'] >= 0.693147 && feature.properties['log_n_spp'] <= 1.430923 ) {
+                return {
+                pane: 'pane_Parroquies_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(200,220,240,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['log_n_spp'] >= 1.430923 && feature.properties['log_n_spp'] <= 2.397895 ) {
+                return {
+                pane: 'pane_Parroquies_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(115,178,216,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['log_n_spp'] >= 2.397895 && feature.properties['log_n_spp'] <= 3.346241 ) {
+                return {
+                pane: 'pane_Parroquies_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(41,121,185,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['log_n_spp'] >= 3.346241 && feature.properties['log_n_spp'] <= 6.049733 ) {
+                return {
+                pane: 'pane_Parroquies_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(8,48,107,1.0)',
+                interactive: true,
+            }
+            }
+        }
+        map.createPane('pane_Parroquies_2');
+        map.getPane('pane_Parroquies_2').style.zIndex = 402;
+        map.getPane('pane_Parroquies_2').style['mix-blend-mode'] = 'normal';
+        var layer_Parroquies_2 = new L.geoJson(json_Parroquies_2, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_Parroquies_2',
+            layerName: 'layer_Parroquies_2',
+            pane: 'pane_Parroquies_2',
+            onEachFeature: pop_Parroquies_2,
+            style: style_Parroquies_2_0,
+        });
+        bounds_group.addLayer(layer_Parroquies_2);
+        map.addLayer(layer_Parroquies_2);
+        function pop_Conceyos_3(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td class="visible-with-data" id="conceyu" colspan="2"><strong>conceyu</strong><br />' + (feature.properties['conceyu'] !== null ? autolinker.link(String(feature.properties['conceyu']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_Conceyos_3_0() {
+            return {
+                pane: 'pane_Conceyos_3',
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 4.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+        }
+        map.createPane('pane_Conceyos_3');
+        map.getPane('pane_Conceyos_3').style.zIndex = 403;
+        map.getPane('pane_Conceyos_3').style['mix-blend-mode'] = 'normal';
+        var layer_Conceyos_3 = new L.geoJson(json_Conceyos_3, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_Conceyos_3',
+            layerName: 'layer_Conceyos_3',
+            pane: 'pane_Conceyos_3',
+            onEachFeature: pop_Conceyos_3,
+            style: style_Conceyos_3_0,
+        });
+        bounds_group.addLayer(layer_Conceyos_3);
+        map.addLayer(layer_Conceyos_3);
+        function pop_iNaturalist_4(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td class="visible-with-data" id="scientific_name" colspan="2"><strong>scientific_name</strong><br />' + (feature.properties['scientific_name'] !== null ? autolinker.link(String(feature.properties['scientific_name']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_iNaturalist_4_0() {
+            return {
+                pane: 'pane_iNaturalist_4',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(61,128,53,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(84,176,74,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_iNaturalist_4');
+        map.getPane('pane_iNaturalist_4').style.zIndex = 404;
+        map.getPane('pane_iNaturalist_4').style['mix-blend-mode'] = 'normal';
+        var layer_iNaturalist_4 = new L.geoJson(json_iNaturalist_4, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_iNaturalist_4',
+            layerName: 'layer_iNaturalist_4',
+            pane: 'pane_iNaturalist_4',
+            onEachFeature: pop_iNaturalist_4,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_iNaturalist_4_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_iNaturalist_4);
+        map.addLayer(layer_iNaturalist_4);
+        var overlaysTree = [
+            {label: '<img src="legend/iNaturalist_4.png" /> iNaturalist', layer: layer_iNaturalist_4},
+            {label: '<img src="legend/Conceyos_3.png" /> Conceyos', layer: layer_Conceyos_3},
+            {label: 'Parroquies<br /><table><tr><td style="text-align: center;"><img src="legend/Parroquies_2_00690.png" /></td><td>0 - 0.69</td></tr><tr><td style="text-align: center;"><img src="legend/Parroquies_2_0691431.png" /></td><td>0.69 - 1.43</td></tr><tr><td style="text-align: center;"><img src="legend/Parroquies_2_143242.png" /></td><td>1.43 - 2.4</td></tr><tr><td style="text-align: center;"><img src="legend/Parroquies_2_243353.png" /></td><td>2.4 - 3.35</td></tr><tr><td style="text-align: center;"><img src="legend/Parroquies_2_3356054.png" /></td><td>3.35 - 6.05</td></tr></table>', layer: layer_Parroquies_2},
+            {label: 'AFLIBER<br /><table><tr><td style="text-align: center;"><img src="legend/AFLIBER_1_0960.png" /></td><td>0 - 96</td></tr><tr><td style="text-align: center;"><img src="legend/AFLIBER_1_961451.png" /></td><td>96 - 145</td></tr><tr><td style="text-align: center;"><img src="legend/AFLIBER_1_1452372.png" /></td><td>145 - 237</td></tr><tr><td style="text-align: center;"><img src="legend/AFLIBER_1_2373533.png" /></td><td>237 - 353</td></tr><tr><td style="text-align: center;"><img src="legend/AFLIBER_1_3539484.png" /></td><td>353 - 948</td></tr></table>', layer: layer_AFLIBER_1},
+            {label: "Google Satellite Hybrid", layer: layer_GoogleSatelliteHybrid_0},]
+        var lay = L.control.layers.tree(null, overlaysTree,{
+            //namedToggle: true,
+            //selectorBack: false,
+            //closedSymbol: '&#8862; &#x1f5c0;',
+            //openedSymbol: '&#8863; &#x1f5c1;',
+            //collapseAll: 'Collapse all',
+            //expandAll: 'Expand all',
+            collapsed: false, 
+        });
+        lay.addTo(map);
+		document.addEventListener("DOMContentLoaded", function() {
+            // set new Layers List height which considers toggle icon
+            function newLayersListHeight() {
+                var layerScrollbarElement = document.querySelector('.leaflet-control-layers-scrollbar');
+                if (layerScrollbarElement) {
+                    var layersListElement = document.querySelector('.leaflet-control-layers-list');
+                    var originalHeight = layersListElement.style.height 
+                        || window.getComputedStyle(layersListElement).height;
+                    var newHeight = parseFloat(originalHeight) - 50;
+                    layersListElement.style.height = newHeight + 'px';
+                }
+            }
+            var isLayersListExpanded = true;
+            var controlLayersElement = document.querySelector('.leaflet-control-layers');
+            var toggleLayerControl = document.querySelector('.leaflet-control-layers-toggle');
+            // toggle Collapsed/Expanded and apply new Layers List height
+            toggleLayerControl.addEventListener('click', function() {
+                if (isLayersListExpanded) {
+                    controlLayersElement.classList.remove('leaflet-control-layers-expanded');
+                } else {
+                    controlLayersElement.classList.add('leaflet-control-layers-expanded');
+                }
+                isLayersListExpanded = !isLayersListExpanded;
+                newLayersListHeight()
+            });	
+			// apply new Layers List height if toggle layerstree
+			if (controlLayersElement) {
+				controlLayersElement.addEventListener('click', function(event) {
+					var toggleLayerHeaderPointer = event.target.closest('.leaflet-layerstree-header-pointer span');
+					if (toggleLayerHeaderPointer) {
+						newLayersListHeight();
+					}
+				});
+			}
+            // Collapsed/Expanded at Start to apply new height
+            setTimeout(function() {
+                toggleLayerControl.click();
+            }, 10);
+            setTimeout(function() {
+                toggleLayerControl.click();
+            }, 10);
+            // Collapsed touch/small screen
+            var isSmallScreen = window.innerWidth < 650;
+            if (isSmallScreen) {
+                setTimeout(function() {
+                    controlLayersElement.classList.remove('leaflet-control-layers-expanded');
+                    isLayersListExpanded = !isLayersListExpanded;
+                }, 500);
+            }  
+        });       
+        setBounds();
+        </script>        
+    </body>
+</html>
